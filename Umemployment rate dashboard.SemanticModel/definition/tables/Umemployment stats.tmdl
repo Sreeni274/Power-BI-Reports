@@ -1,0 +1,204 @@
+table 'Umemployment stats'
+	lineageTag: 08159529-32b0-4bc5-9061-74d62c0b4363
+
+	measure Min_rate = ROUND(MIN('Umemployment stats'[Unemployment_rate]),4) *100 &"%"
+		lineageTag: 6ccb1109-74e5-49c6-9fc5-47293e2ca70a
+
+		changedProperty = IsHidden
+
+	measure Min_UMcounty =
+			UPPER(IF(AND(SELECTEDVALUE('Codes'[Region]) = "",SELECTEDVALUE('Codes'[State_name]) = ""),CALCULATE(
+			   VALUES('Umemployment stats'[County Name]),
+			    'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			    'Umemployment stats'[Unemployment_rate] = MIN('Umemployment stats'[Unemployment_rate])),IF(SELECTEDVALUE('Codes'[Region]) <> "",
+			    IF(SELECTEDVALUE('Codes'[State_name]) = "", CALCULATE(
+			    VALUES('Umemployment stats'[County Name]),
+			    'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			    'Codes'[Region] = SELECTEDVALUE('Codes'[Region]),
+			    'Umemployment stats'[Unemployment_rate] = MIN('Umemployment stats'[Unemployment_rate])),CALCULATE(
+			    VALUES('Umemployment stats'[County Name]),
+			    'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			    'Codes'[Region] = SELECTEDVALUE('Codes'[Region]),
+			    'Codes'[State_name] = SELECTEDVALUE('Codes'[State_name]),
+			    'Umemployment stats'[Unemployment_rate] = MIN('Umemployment stats'[Unemployment_rate]))),"")))&","&CALCULATE(VALUES('Umemployment stats'[State_ID]),'Umemployment stats'[Unemployment_rate] = MIN('Umemployment stats'[Unemployment_rate]))
+		lineageTag: b7c7b4e6-348b-447a-b0c4-1b76764974ee
+
+		changedProperty = IsHidden
+
+	measure Max_rate = ROUND(MAX('Umemployment stats'[Unemployment_rate]),4) *100 &"%"
+		lineageTag: 96b35120-e1f1-4550-b5af-0561f786a3b2
+
+		changedProperty = IsHidden
+
+	measure Max_UMcounty =
+			
+			UPPER(IF(AND(SELECTEDVALUE('Codes'[Region]) = "",SELECTEDVALUE('Codes'[State_name]) = ""),
+			CALCULATE(VALUES('Umemployment stats'[County Name]),
+			'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			'Umemployment stats'[Unemployment_rate] = MAX('Umemployment stats'[Unemployment_rate])),
+			    IF(SELECTEDVALUE('Codes'[Region]) <> "",
+			        IF(SELECTEDVALUE('Codes'[State_name]) = "", CALCULATE(
+			            VALUES('Umemployment stats'[County Name]),
+			            'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			            'Codes'[Region] = SELECTEDVALUE('Codes'[Region]),
+			            'Umemployment stats'[Unemployment_rate] = MAX('Umemployment stats'[Unemployment_rate])),
+			                CALCULATE(VALUES('Umemployment stats'[County Name]),
+			                'Umemployment stats'[Year] = SELECTEDVALUE('Umemployment stats'[Year]),
+			                'Codes'[Region] = SELECTEDVALUE('Codes'[Region]),
+			                'Codes'[State_name] = SELECTEDVALUE('Codes'[State_name]),
+			                'Umemployment stats'[Unemployment_rate] = MAX('Umemployment stats'[Unemployment_rate]))),""))) &","& CALCULATE(VALUES('Umemployment stats'[State_ID]),'Umemployment stats'[Unemployment_rate] = MAX('Umemployment stats'[Unemployment_rate]))
+		lineageTag: 0a9405f2-cc15-4a63-8f86-1bfac130e33b
+
+		changedProperty = IsHidden
+
+	measure E_rate = ROUND(SUM('Umemployment stats'[Employed])/SUM('Umemployment stats'[Labor Force]),4)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 03329af9-b2c2-4028-a15f-94f148a21a2a
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure Um_rate = ROUND(SUM('Umemployment stats'[Unemployed])/SUM('Umemployment stats'[Labor Force]),4)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 35927085-48c5-4597-8b87-2f7176117e40
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	column 'LAU Code'
+		dataType: string
+		lineageTag: 65c35b4a-3ba0-4778-8860-953746234929
+		summarizeBy: none
+		sourceColumn: LAU Code
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'State FIPS'
+		dataType: int64
+		formatString: 0
+		lineageTag: a3c2530d-5b7a-482c-85c0-1fb7ab181f3b
+		summarizeBy: none
+		sourceColumn: State FIPS
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'County FIPS'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0382c886-c8de-494c-9cfc-66ca3eb3a148
+		summarizeBy: sum
+		sourceColumn: County FIPS
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: e15d26bf-d81d-4b76-a37e-dd86bb2fade9
+		summarizeBy: sum
+		sourceColumn: Year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Labor Force'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e89b2d3-97e8-4fe9-91f3-a605bc0c6f78
+		summarizeBy: sum
+		sourceColumn: Labor Force
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employed
+		dataType: int64
+		formatString: 0
+		lineageTag: 2f6beaff-27a8-40ed-9624-03a8987005f3
+		summarizeBy: sum
+		sourceColumn: Employed
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unemployed
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b61b285-5292-4ce9-a83f-858de3ab52dc
+		summarizeBy: sum
+		sourceColumn: Unemployed
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'County Name'
+		dataType: string
+		lineageTag: 7530ad44-f03d-4270-b2d8-8b8e1e9a61c1
+		summarizeBy: none
+		sourceColumn: County Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column State_ID
+		dataType: string
+		lineageTag: 4db3eb73-80e1-471c-bf6c-83f6072d229d
+		summarizeBy: none
+		sourceColumn: State_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employment_rate = ROUND(IFERROR(DIVIDE('Umemployment stats'[Employed],'Umemployment stats'[Labor Force]),0),4)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 16d498c3-653a-4b67-8ced-02a74e317e75
+		summarizeBy: sum
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unemployment_rate = ROUND(IFERROR(DIVIDE('Umemployment stats'[Unemployed],'Umemployment stats'[Labor Force]),0),4)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 31f123ca-477c-4435-af5a-e572f1a98b11
+		summarizeBy: sum
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Umemployment stats-91367871-42eb-4310-87f2-7add3d54ac07' = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\sreen\Downloads\datasets work\Excel datasets\Umemployment\Unemployment complete data for last 12 years.xlsx"), null, true),
+				    #"Umemployment stats_Sheet" = Source{[Item="Umemployment stats",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Umemployment stats_Sheet", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"LAU Code", type text}, {"State FIPS", Int64.Type}, {"County FIPS", Int64.Type}, {"County Name/ State Abb", type text}, {"Year", Int64.Type}, {"Labor Force", Int64.Type}, {"Employed", Int64.Type}, {"Unemployed", Int64.Type}}),
+				    #"Split Column by Delimiter" = Table.SplitColumn(#"Changed Type", "County Name/ State Abb", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), {"County Name/ State Abb.1", "County Name/ State Abb.2"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"County Name/ State Abb.1", type text}, {"County Name/ State Abb.2", type text}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type1",{{"County Name/ State Abb.1", "County Name"}, {"County Name/ State Abb.2", "State_ID"}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Renamed Columns","County","",Replacer.ReplaceText,{"County Name"})
+				in
+				    #"Replaced Value"
+
+	annotation PBI_ResultType = Table
+

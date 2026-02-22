@@ -1,0 +1,4 @@
+relationship 352d39fb-7d26-461b-b93b-522d91997c8b
+	fromColumn: 'Umemployment stats'.'State FIPS'
+	toColumn: Codes.State
+

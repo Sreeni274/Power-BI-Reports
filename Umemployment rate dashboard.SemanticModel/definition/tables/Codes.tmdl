@@ -1,0 +1,94 @@
+table Codes
+	lineageTag: 81508d89-7750-49a1-a316-e70d8dd16d33
+
+	measure M2 = SELECTEDVALUE('Umemployment stats'[Year])
+		formatString: 0
+		lineageTag: 6fd2e68f-35f6-4ef8-8f28-043a2dba0a17
+
+		changedProperty = IsHidden
+
+	measure M3 = SELECTEDVALUE(Codes[State_name])
+		lineageTag: b78f7911-c980-49d0-b148-f5d9b2a3b5f4
+
+		changedProperty = IsHidden
+
+	measure 'Measure 2' = CONCATENATEX(VALUES('Codes'[State_name]),[State_name],",")
+		lineageTag: 5de3189c-a690-48b2-bf9c-7355f7012e6a
+
+		changedProperty = IsHidden
+
+	column State
+		dataType: int64
+		formatString: 0
+		lineageTag: 1633b804-2bcb-429e-9fad-e4b7acf77cc5
+		summarizeBy: none
+		sourceColumn: State
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'State Abr'
+		dataType: string
+		lineageTag: 13317b79-4999-4f57-ab6e-a9025bf93771
+		summarizeBy: none
+		sourceColumn: State Abr
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column State_name
+		dataType: string
+		lineageTag: 13836984-dbc5-485c-a77a-8d2b30c6e2df
+		summarizeBy: none
+		sourceColumn: State_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statens
+		dataType: int64
+		formatString: 0
+		lineageTag: f582fd90-166e-429e-9424-761fd4f08c8f
+		summarizeBy: none
+		sourceColumn: Statens
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 89733765-3e98-4fea-9f9c-08ea1201cf45
+		summarizeBy: none
+		sourceColumn: Region
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Division
+		dataType: string
+		lineageTag: 976837c1-6c17-46ef-b753-8ba97da53ce8
+		summarizeBy: none
+		sourceColumn: Division
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Codes-0623e58e-73a5-4834-914b-e63ad990640a = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\sreen\Downloads\datasets work\Excel datasets\Umemployment\State codes.xlsx"), null, true),
+				    Codes_Sheet = Source{[Item="Codes",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Codes_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"State", Int64.Type}, {"State Abr", type text}, {"State_name", type text}, {"Statens", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

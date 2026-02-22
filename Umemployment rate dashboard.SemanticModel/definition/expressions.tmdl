@@ -1,0 +1,81 @@
+expression 'Errors in Umemployment Rate' =
+		let
+		Source = #"Umemployment Rate",
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"FIPS_County code", "Year", "Labor_Force", "Employed", "Unemployed", "Employment Rate", "Unemployement_Rate"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "FIPS_County code", "Year", "Labor_Force", "Employed", "Unemployed", "Employment Rate", "Unemployement_Rate"})
+		in
+		  #"Reordered Columns"
+	lineageTag: ef3bed71-9626-4b04-a02c-6582cfbc197e
+	queryGroup: 'Query Errors - 9/19/2022 11:40:16 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Umemployment Rate' =
+		let
+		    Source = Excel.Workbook(File.Contents("C:\Users\sreen\Downloads\datasets work\Excel datasets\Umemployment\Employment details.xlsx"), null, true),
+		    #"Umemployment Rate_Sheet" = Source{[Item="Umemployment Rate",Kind="Sheet"]}[Data],
+		    #"Promoted Headers" = Table.PromoteHeaders(#"Umemployment Rate_Sheet", [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"FIPS_County code", Int64.Type}, {"Year", Int64.Type}, {"Labor_Force", Int64.Type}, {"Employed", Int64.Type}, {"Unemployed", Int64.Type}, {"Employment Rate", type number}, {"Unemployement_Rate", type number}})
+		in
+		    #"Changed Type"
+	lineageTag: fa6f8ed1-a0f6-46f4-91c7-8c5cfda8a640
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Umemployment stats' =
+		let
+		Source = #"Umemployment stats",
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"LAU Code", "State FIPS", "County FIPS", "County Name/ State Abb", "Year", "Labor Force", "Employed", "Unemployed"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "LAU Code", "State FIPS", "County FIPS", "County Name/ State Abb", "Year", "Labor Force", "Employed", "Unemployed"})
+		in
+		  #"Reordered Columns"
+	lineageTag: 314f14b3-7f65-46dc-a8be-c35b3714976f
+	queryGroup: 'Query Errors - 9/22/2022 10:19:55 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Codes' =
+		let
+		Source = Codes,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"State", "State Abr", "State_name", "Statens", "Region", "Division"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "State", "State Abr", "State_name", "Statens", "Region", "Division"})
+		in
+		  #"Reordered Columns"
+	lineageTag: e9e238c2-5ad9-4226-bcc0-3344f18f9879
+	queryGroup: 'Query Errors - 9/28/2022 2:23:25 PM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
