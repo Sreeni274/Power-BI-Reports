@@ -1,0 +1,5 @@
+relationship d91ef4f1-d35d-476e-9bc7-e40025edae6b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: OlympicAthletes.'Closing Ceremony Date'
+	toColumn: LocalDateTable_1c7ba0fa-421d-426a-aa77-9e18a39c5f6e.Date
+

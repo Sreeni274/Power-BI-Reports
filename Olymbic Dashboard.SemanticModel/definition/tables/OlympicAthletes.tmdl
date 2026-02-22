@@ -1,0 +1,118 @@
+table OlympicAthletes
+	lineageTag: b3f00e1c-1087-40b0-bc7f-cb5452c628f8
+
+	column Athlete
+		dataType: string
+		lineageTag: 85c05062-45c3-42d0-9b8b-bfec31606824
+		summarizeBy: none
+		sourceColumn: Athlete
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: 049dec39-eb26-4fb5-95a8-a2a03d495f93
+		summarizeBy: sum
+		sourceColumn: Age
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 0275f260-9479-442b-8c0e-f9b78413f19c
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 75549fbd-e886-4121-b4af-47f9b8d9beaf
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Closing Ceremony Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 46bff035-465d-4875-a18c-5fedcb73af11
+		summarizeBy: none
+		sourceColumn: Closing Ceremony Date
+
+		variation Variation
+			isDefault
+			relationship: d91ef4f1-d35d-476e-9bc7-e40025edae6b
+			defaultHierarchy: LocalDateTable_1c7ba0fa-421d-426a-aa77-9e18a39c5f6e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Sport
+		dataType: string
+		lineageTag: 203385a0-6f7a-446b-a7ea-93e7be76880d
+		summarizeBy: none
+		sourceColumn: Sport
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Gold Medals'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8244106c-34c1-4b6a-ac28-36911c855565
+		summarizeBy: sum
+		sourceColumn: Gold Medals
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Silver Medals'
+		dataType: int64
+		formatString: 0
+		lineageTag: 1afed3f5-52e0-4f25-b828-2dd485aa14df
+		summarizeBy: sum
+		sourceColumn: Silver Medals
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Bronze Medals'
+		dataType: int64
+		formatString: 0
+		lineageTag: 92656f1f-52a4-40fb-93ef-4cb8aec925bc
+		summarizeBy: sum
+		sourceColumn: Bronze Medals
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Medals'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5faad592-8232-469d-9672-126445d36084
+		summarizeBy: sum
+		sourceColumn: Total Medals
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age_group = IF(AND(OlympicAthletes[Age]> 0,OlympicAthletes[Age]<=15), "0 - 15",IF(AND(OlympicAthletes[Age]> 15, OlympicAthletes[Age] <=30),"16 - 30",IF(AND(OlympicAthletes[Age]>30,OlympicAthletes[Age]<=45),"31 -  45",">45")))
+		lineageTag: 4eccad0d-48f1-411a-8134-526330dc3fcb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition OlympicAthletes-dfb42e02-88dc-488d-a0b9-bb1e4731db00 = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\sreen\Downloads\Projects\Olymbic atheletes\Olympic Athletes.xlsx"), null, true),
+				    OlympicAthletes_Sheet = Source{[Item="OlympicAthletes",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(OlympicAthletes_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Athlete", type text}, {"Age", Int64.Type}, {"Country", type text}, {"Year", Int64.Type}, {"Closing Ceremony Date", type date}, {"Sport", type text}, {"Gold Medals", Int64.Type}, {"Silver Medals", Int64.Type}, {"Bronze Medals", Int64.Type}, {"Total Medals", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
